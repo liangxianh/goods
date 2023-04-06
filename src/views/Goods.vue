@@ -3,7 +3,7 @@
     <header>
       <div class="left-title"><h3>{{ pageTitle }}</h3></div>
       <div class="right-cart">
-        <nav class="shop-cart" @mouseover="mouseEnter()" @mouseenter="mouseEnter()" @mouseout="mouseOut">
+        <nav class="shop-cart" @mouseover="mouseEnter()" @mouseout="mouseOut">
           购物车
           <div class="cart-wrapper" v-show="cartShow">
             <div class="no-data" v-if="cartGoodsList.length === 0">还没有商品，快去浏览商品加入购物车吧！</div>
@@ -26,11 +26,11 @@
         <div class="section-item" v-for="item in list" :key="item.id">
           <div class="item-img">
             <template v-if="item.url">
-              <img src="@/assets/imgs/large.jpg" alt="goods">
+              <img :src="item.url" alt="goods">
             </template>
             <template>
               <!-- 占位图 -->
-              <img src="@/assets/imgs/large.jpg" alt="goods">
+              <img src="@/assets/imgs/watch.png" alt="goods">
             </template>
           </div>
           <div class="item-info">
@@ -60,13 +60,13 @@ export default {
           id: 1,
           name: '香蕉-广西香蕉新鲜包熟包甜，不好吃包退呦！',
           price: 11,
-          img: '@/assets/imgs/watch.png'
+          img: ''
         },
         {
           id: 2,
           name: '苹果-保甜不好吃不要钱！',
           price: 23.00,
-          img: '@/assets/imgs/phone.png'
+          img: ''
         },
         {
           id: 3,
@@ -78,7 +78,7 @@ export default {
         {
           id: 4,
           name: '榴莲',
-          price: 0.999,
+          price: 0.99,
           img: ''
         },
         {
@@ -94,39 +94,18 @@ export default {
   },
   created () {
     // this.getGoods()
-    var arr = [
-      {
-        id: 1,
-        name: '香蕉-广西香蕉新鲜包熟包甜，不好吃包退呦！',
-        price: 11,
-        img: '@/assets/imgs/watch.png',
-        num: 1
-      },
-      {
-        id: 2,
-        name: '香蕉-广西香蕉新鲜包熟包甜，不好吃包退呦！',
-        price: 14,
-        img: '@/assets/imgs/watch.png',
-        num: 2
-      }
-    ]
-    const total = arr.reduce((result, item) => {
-      // eslint-disable-next-line no-return-assign
-      return result += item.num * item.price
-    })
-    console.log(total)
   },
   methods: {
     // getGoods () {
     //   此处可以模拟从服务端获取数据
     // }
     addCart (item) {
-      const isHave = this.cartGoodsList.findIndex((inner, index, arr) => {
+      const isHaveIdx = this.cartGoodsList.findIndex((inner) => {
         return inner.id === item.id
       })
-      console.log(isHave)
-      if (isHave > -1) {
-        this.cartGoodsList[isHave].num++
+      console.log(isHaveIdx)
+      if (isHaveIdx > -1) {
+        this.cartGoodsList[isHaveIdx].num++
       } else {
         const tempObj = {num: 1, ...item}
         this.cartGoodsList.push(tempObj)
@@ -153,15 +132,16 @@ export default {
       this.cartGoodsList.forEach((item) => {
         total = total + item.num * item.price
       })
-      // console.log(total)
       let r = window.confirm(`你的商品总价为${total},确定下单么？`)
       if (r) {
         // 确认下单的相关操心
         console.log('已成功下单')
         this.cartGoodsList = []
+        this.cartShow = false
       } else {
         // 取消的相关操作
         console.log('已取消')
+        this.cartShow = false
       }
     }
   }
@@ -170,40 +150,41 @@ export default {
 <style scoped>
 .goods-container {
   font-size: 14px;
+  padding: 0 30px;
 }
 header {
   display: flex;
 }
 header .left-title {
   width: 80px;
+  flex: 1;
+  text-align: left;
 }
 header .right-cart {
-  flex: 1;
+  width: 60px;
   align-self: flex-end;
   text-align: right;
-  position: relative;
 }
 header .right-cart .shop-cart {
-  line-height: 54px;
+  line-height: 50px;
 }
 .cart-wrapper {
   width: 300px;
   position: absolute;
   top: 40px;
-  right: 0;
+  right: 10px;
   z-index: 99;
   background-color:#fff;
   padding: 12px 8px;
-  box-shadow: 5px 0px 5px 0px rgba(0,0,0,0.5);
+  box-shadow: 5px 0px 5px 2px rgba(0,0,0,0.2);
   border-radius: 10px;
 }
 .section-wrapper {
   display: flex;
-  justify-content: left;
+  justify-content: center;
   flex-wrap: wrap;
 }
 .section-wrapper .section-item {
-  /* flex: 1; */
   width: 300px;
   border: 1px solid #eeeeee;
   margin: 8px;
@@ -252,9 +233,6 @@ header .right-cart .shop-cart {
 .button-del {
   width: 50px;
   height: 24px;
-  /* background-color: goldenrod;
-  color: #fff; */
-  /* border:none; */
 }
 .item-buy {
   text-align: center;
