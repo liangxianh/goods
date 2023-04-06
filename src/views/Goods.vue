@@ -5,7 +5,7 @@
       <div class="right-cart">
         <nav class="shop-cart" @mouseover="mouseEnter()" @mouseout="mouseOut">
           购物车
-          <div class="cart-wrapper" v-show="cartShow">
+          <div class="cart-wrapper" v-show="cartShowModal">
             <div class="no-data" v-if="cartGoodsList.length === 0">还没有商品，快去浏览商品加入购物车吧！</div>
             <div v-else>
               <div class="item-info" v-for="(item, index) in cartGoodsList" :key="item.id">
@@ -41,6 +41,9 @@
         </div>
       </div>
     </main>
+    <div class="my-alert" v-show="successTipsModal">
+      <span>{{ successTips }}</span>
+    </div>
   </div>
 </template>
 
@@ -71,7 +74,6 @@ export default {
         {
           id: 3,
           name: '猕猴桃',
-          description: '广西香蕉新鲜包熟包甜，不好吃包退呦！',
           price: 9.89,
           img: ''
         },
@@ -86,10 +88,18 @@ export default {
           name: '西瓜',
           price: 1199,
           img: ''
+        },
+        {
+          id: 6,
+          name: '橙子',
+          price: 54,
+          img: ''
         }
       ],
       cartGoodsList: [],
-      cartShow: false
+      cartShowModal: false,
+      successTipsModal: false,
+      successTips: ''
     }
   },
   created () {
@@ -110,8 +120,11 @@ export default {
         const tempObj = {num: 1, ...item}
         this.cartGoodsList.push(tempObj)
       }
-      // window.alert('添加成功')
-      console.log(this.cartGoodsList)
+      this.successTips = '加购成功'
+      this.successTipsModal = true
+      setTimeout(() => {
+        this.successTipsModal = false
+      }, 500)
     },
     delCart (index) {
       let r = window.confirm('确认删除该商品么？')
@@ -122,26 +135,33 @@ export default {
       }
     },
     mouseEnter () {
-      this.cartShow = true
+      this.cartShowModal = true
     },
     mouseOut () {
-      this.cartShow = false
+      this.cartShowModal = false
     },
     toBuy () {
       let total = 0
       this.cartGoodsList.forEach((item) => {
         total = total + item.num * item.price
       })
+      total = total.toFixed(2)
       let r = window.confirm(`你的商品总价为${total},确定下单么？`)
       if (r) {
-        // 确认下单的相关操心
+        // 确认下单的相关操做
         console.log('已成功下单')
+        this.successTips = '下单成功'
+        this.successTipsModal = true
+        setTimeout(() => {
+          this.successTipsModal = false
+          this.successTips = ''
+        }, 500)
         this.cartGoodsList = []
-        this.cartShow = false
+        this.cartShowModal = false
       } else {
         // 取消的相关操作
         console.log('已取消')
-        this.cartShow = false
+        this.cartShowModal = false
       }
     }
   }
@@ -240,5 +260,22 @@ header .right-cart .shop-cart {
 .item-buy button {
   width: 96%;
   height:30px;
+}
+.my-alert {
+  width: 150px;
+  height: 50px;
+  background-color: #3be17bad;
+  border-radius: 8px;
+  position: fixed;
+  bottom: 50%;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+.my-alert span {
+  font-size: 1rem;
+  color: #ffffff;
+  line-height: 50px;
 }
 </style>
